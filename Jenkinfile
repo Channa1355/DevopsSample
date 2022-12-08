@@ -1,0 +1,22 @@
+pipeline{
+    agent any
+
+    stages{
+        stage ('build'){
+            steps{
+                sh 'mvn clen package'
+            }
+            post{
+                success{
+                    echo "Archiving the Artifacts"
+                    archiveArtifacts artifacts: "**/target/*.war"
+                }
+            }
+        }
+        stage ('deploy to tomcat server') {
+             steps{
+                 deploy adapters: [tomcat7(credentialsId: '89863452-3dfb-44b5-9ed0-469b90345ea4', path: '', url: 'http://3.88.70.45:8080/')], contextPath: null, war: '**/*.war'
+             }
+        }     
+    }
+}
